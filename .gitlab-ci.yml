@@ -1,0 +1,38 @@
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
+stages:
+    - build
+    - deploy
+
+create images:
+  stage: build
+  tags:
+    - empdataimport
+  # Specify a Docker image to run the job in.
+  image: docker:latest
+  # Specify an additional image 'docker:dind' ("Docker-in-Docker") that
+  # will start up the Docker daemon when it is brought up by a runner.
+  services:
+    - docker:dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+  only:
+    - staging  
+
+deployment:
+  stage: deploy
+  tags:
+      - empdataimport
+  before_script: 
+      - mkdir -p ~/.ssh
+      - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts #SSH_KNOWN_HOSTS = ssh-keygen 52.200.20.24 //itmcloudip
+      - echo -e "$SSH_KEY" > ~/.ssh/id_rsa     
+      - chmod 600 ~/.ssh/id_rsa     
+      - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'     
+  script:
+      - ssh ubuntu@$SERVER_IP "sh /usr/local/bin/cicd/empoweru/deployDocker.sh && exit"
+  only:
+      - staging

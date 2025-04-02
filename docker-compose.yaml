@@ -1,0 +1,16 @@
+version: '3.5'
+services:
+  dataimport:
+    image: dataimport:latest
+    build: .
+    networks:
+      - dataimport_backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - /home/itm/Desktop/sharedata/:/var/uploadData
+
+networks:
+  dataimport_backend:
+    external: 
+      name: micro_network

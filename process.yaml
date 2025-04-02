@@ -1,0 +1,3 @@
+apps:
+  - script: app.js             # Application's startup file name
+    exec_mode: cluster              # Execution mode
