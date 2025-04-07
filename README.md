@@ -40,7 +40,7 @@ There is a repository name ConstantFile, where key json file is kept, which is u
 File name: serviceAccountKey.json
 In this file, one can set their credential
 
-Update .env file with below varible to fetch credential
+Update .env file with below variable to fetch credential
 ```sh
 CONSTANT_FILE_PATH=/var/www/html/project/constantfile/
 ```
